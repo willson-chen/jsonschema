@@ -131,6 +131,51 @@ def _id_of(schema):
     return schema.get(u"$id", u"")
 
 
+def _no_boolean_errors_from(validator, instance, schema):
+    ref = schema.get(u"$ref")
+    if ref is not None:
+        fn = validator.VALIDATORS["$ref"]
+        errors = fn(validator, ref, instance, schema) or ()
+        for error in errors:
+            # set details if not already set by the called fn
+            error._set(instance=instance, schema=schema)
+            yield error
+    else:
+        for k, v in iteritems(schema):
+            fn = validator.VALIDATORS.get(k)
+            if fn is None:
+                continue
+            errors = fn(validator, v, instance, schema) or ()
+            for error in errors:
+                # set details if not already set by the called fn
+                error._set(
+                    validator=k,
+                    validator_value=v,
+                    instance=instance,
+                    schema=schema,
+                )
+                if k != u"$ref":
+                    error.schema_path.appendleft(k)
+                yield error
+
+
+def _errors_from(validator, instance, schema):
+    if schema is True:
+        return
+    elif schema is False:
+        yield exceptions.ValidationError(
+            "False schema does not allow %r" % (instance,),
+            validator=None,
+            validator_value=None,
+            instance=instance,
+            schema=schema,
+        )
+        return
+    else:
+        for error in _no_boolean_errors_from(validator, instance, schema):
+            yield error
+
+
 def create(
     meta_schema,
     validators=(),
@@ -138,6 +183,7 @@ def create(
     default_types=None,
     type_checker=None,
     id_of=_id_of,
+    errors_from=_errors_from,
 ):
     """
     Create a new validator class.
@@ -189,6 +235,12 @@ def create(
         id_of (callable):
 
             A function that given a schema, returns its ID.
+
+        errors_from (callable):
+
+            A function that given a validator, instance and schema,
+            returns the iterable of validation errors that are
+            applicable.
 
     Returns:
 
@@ -270,45 +322,12 @@ def create(
             if _schema is None:
                 _schema = self.schema
 
-            if _schema is True:
-                return
-            elif _schema is False:
-                yield exceptions.ValidationError(
-                    "False schema does not allow %r" % (instance,),
-                    validator=None,
-                    validator_value=None,
-                    instance=instance,
-                    schema=_schema,
-                )
-                return
-
             scope = id_of(_schema)
             if scope:
                 self.resolver.push_scope(scope)
             try:
-                ref = _schema.get(u"$ref")
-                if ref is not None:
-                    validators = [(u"$ref", ref)]
-                else:
-                    validators = iteritems(_schema)
-
-                for k, v in validators:
-                    validator = self.VALIDATORS.get(k)
-                    if validator is None:
-                        continue
-
-                    errors = validator(self, v, instance, _schema) or ()
-                    for error in errors:
-                        # set details if not already set by the called fn
-                        error._set(
-                            validator=k,
-                            validator_value=v,
-                            instance=instance,
-                            schema=_schema,
-                        )
-                        if k != u"$ref":
-                            error.schema_path.appendleft(k)
-                        yield error
+                for error in errors_from(self, instance, _schema):
+                    yield error
             finally:
                 if scope:
                     self.resolver.pop_scope()
@@ -442,6 +461,7 @@ Draft3Validator = create(
     type_checker=_types.draft3_type_checker,
     version="draft3",
     id_of=lambda schema: schema.get(u"id", ""),
+    errors_from=_no_boolean_errors_from,
 )
 
 Draft4Validator = create(
@@ -477,6 +497,7 @@ Draft4Validator = create(
     type_checker=_types.draft4_type_checker,
     version="draft4",
     id_of=lambda schema: schema.get(u"id", ""),
+    errors_from=_no_boolean_errors_from,
 )
 
 Draft6Validator = create(
