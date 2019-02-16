@@ -179,7 +179,38 @@ class TestLegacyTypeChecking(SynchronousTestCase):
                 u"integer",
                 u"null",
                 u"number",
-                u"object", u"string",
+                u"object",
+                u"string",
+            },
+        )
+        self.flushWarnings()
+
+    def test_default_types_with_provided_custom_type_checker(self):
+        type_checker = TypeChecker(
+            {
+                u"Here": lambda foo: False,
+                u"we": lambda foo: False,
+                u"go": lambda foo: False,
+                u"mistaking": lambda foo: False,
+                u"clouds": lambda foo: False,
+                u"for": lambda foo: False,
+                u"mountains": lambda foo: False,
+            },
+        )
+        Validator = validators.create(
+            meta_schema={},
+            validators=(),
+            type_checker=type_checker,
+        )
+        self.assertEqual(
+            set(Validator.DEFAULT_TYPES), {
+                u"Here",
+                u"we",
+                u"go",
+                u"mistaking",
+                u"clouds",
+                u"for",
+                u"mountains",
             },
         )
         self.flushWarnings()

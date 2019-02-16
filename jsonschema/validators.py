@@ -213,12 +213,14 @@ def create(
             type_checkers=_generate_legacy_type_checks(default_types),
         )
     else:
-        default_types = _DEPRECATED_DEFAULT_TYPES
         _created_with_default_types = False
         if type_checker is None:
             type_checker = _types.TypeChecker(
-                type_checkers=_generate_legacy_type_checks(default_types),
+                type_checkers=_generate_legacy_type_checks(
+                    _DEPRECATED_DEFAULT_TYPES,
+                ),
             )
+        default_types = type_checker._type_checkers
 
     @add_metaclass(_DefaultTypesDeprecatingMetaClass)
     class Validator(object):
