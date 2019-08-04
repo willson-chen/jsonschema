@@ -7,6 +7,7 @@ import json
 import os
 import sys
 import tempfile
+import typing
 import unittest
 
 from twisted.trial.unittest import SynchronousTestCase
@@ -175,6 +176,13 @@ class TestCreateAndExtend(SynchronousTestCase):
 
         Derived = validators.extend(Original)
         self.assertEqual(Derived.ID_OF(Derived.META_SCHEMA), correct_id)
+
+    def test_create_produces_something_ValidatorProtocol_compliant(self):
+        Validator = validators.create(meta_schema={}, validators=())
+        self.assertIsInstance(
+            Validator({}),
+            typing.runtime_checkable(validators.ValidatorProtocol),
+        )
 
 
 class TestLegacyTypeChecking(SynchronousTestCase):

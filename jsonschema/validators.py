@@ -14,6 +14,7 @@ from jsonschema import (
     _validators,
     exceptions,
 )
+from jsonschema._protocol import ValidatorProtocol
 from jsonschema.compat import (
     Sequence,
     int_types,
@@ -214,7 +215,7 @@ def create(
 
     Returns:
 
-        a new `jsonschema.IValidator` class
+        a new `ValidatorProtocol` class
     """
 
     if default_types is not None:
@@ -372,7 +373,7 @@ def extend(validator, validators=(), version=None, type_checker=None):
 
     Arguments:
 
-        validator (jsonschema.IValidator):
+        validator (ValidatorProtocol):
 
             an existing validator class
 
@@ -402,11 +403,12 @@ def extend(validator, validators=(), version=None, type_checker=None):
             a type checker, used when applying the :validator:`type` validator.
 
             If unprovided, the type checker of the extended
-            `jsonschema.IValidator` will be carried along.`
+            `ValidatorProtocol` will be carried along.`
 
     Returns:
 
-        a new `jsonschema.IValidator` class extending the one provided
+        a new `jsonschema.validators.ValidatorProtocol`-implementing
+        class extending the one provided
 
     .. note:: Meta Schemas
 
@@ -848,10 +850,11 @@ def validate(instance, schema, cls=None, *args, **kwargs):
     valid, since not doing so can lead to less obvious error messages and fail
     in less obvious or consistent ways.
 
-    If you know you have a valid schema already, especially if you
-    intend to validate multiple instances with the same schema, you
-    likely would prefer using the `IValidator.validate` method directly
-    on a specific validator (e.g. ``Draft7Validator.validate``).
+    If you know you have a valid schema already, especially
+    if you intend to validate multiple instances with
+    the same schema, you likely would prefer using the
+    `ValidatorProtocol.validate` method directly on a specific validator
+    (e.g. ``Draft7Validator.validate``).
 
 
     Arguments:
@@ -864,7 +867,7 @@ def validate(instance, schema, cls=None, *args, **kwargs):
 
             The schema to validate with
 
-        cls (IValidator):
+        cls (jsonschema.validators.ValidatorProtocol):
 
             The class that will be used to validate the instance.
 
