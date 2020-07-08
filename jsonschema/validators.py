@@ -333,7 +333,7 @@ def create(
                             instance=instance,
                             schema=_schema,
                         )
-                        if k not in {u"if", u"$ref"}:
+                        if k not in {u"if", u"$ref",u"additionalProperties"}:
                             error.schema_path.appendleft(k)
                         yield error
             finally:
