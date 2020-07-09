@@ -719,7 +719,7 @@ class RefResolver(object):
         """
         Retrieve the current resolution scope.
         """
-        return self._scopes_stack[0]
+        return self._scopes_stack[-1]
 
     @property
     def base_uri(self):
