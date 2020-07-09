@@ -60,7 +60,7 @@ def additionalProperties(validator, aP, instance, schema):
                 verb,
                 ", ".join(map(repr, patterns)),
             )
-            yield ValidationError(error)
+            yield ValidationError(error, path=extras)
         else:
             error = "Additional properties are not allowed (%s %s unexpected)"
             yield ValidationError(error % extras_msg(extras))
