@@ -181,4 +181,4 @@ jobs:
     - name: Install asv
       run: python -m pip install asv
     - name: Run benchmark
-      run: asv run
+      run: asv machine --yes  && asv run
