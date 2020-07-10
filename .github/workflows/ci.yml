@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    branches: 
+      - benchmark_asv
   pull_request:
   release:
     types: [published]
@@ -176,3 +178,5 @@ jobs:
       if: runner.os == 'Windows'
     - name: Run tox
       run: python -m tox -e "${{ matrix.python-version.toxenv }}"
+    - name: Run benchmark
+      run: asv run
