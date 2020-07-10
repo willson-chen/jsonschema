@@ -4,14 +4,14 @@
     "version": 1,
 
     // The name of the project being benchmarked
-    "project": "asv",
+    "project": "jsonschema",
 
     // The project's homepage
     "project_url": "https://github.com/WilliamHeaven/jsonschema/",
 
     // The URL or local path of the source code repository for the
     // project being benchmarked
-    "repo": ".",
+    "repo": "./benchmarks",
 
     // List of branches to benchmark. If not provided, defaults to "master"
     // (for git) or "default" (for mercurial).
