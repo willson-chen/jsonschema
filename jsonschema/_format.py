@@ -301,26 +301,25 @@ else:
         return rfc3987.parse(instance, rule="URI_reference")
 
 
-try:
-    from strict_rfc3339 import validate_rfc3339
-except ImportError:
-    try:
-        from rfc3339_validator import validate_rfc3339
-    except ImportError:
-        validate_rfc3339 = None
+_data_time_re = re.compile(r'^\d{4}-[01]\d-[0-3]\d(t|T)'
+                           r'[0-2]\d:[0-5]\d:[0-5]\d'
+                           r'(?:\.\d+)?(?:[+-][0-2]\d:[0-5]\d|z|Z)?\Z')
 
-if validate_rfc3339:
-    @_checks_drafts(name="date-time")
-    def is_datetime(instance):
-        if not isinstance(instance, str):
-            return True
-        return validate_rfc3339(instance)
 
-    @_checks_drafts(draft7="time")
-    def is_time(instance):
-        if not isinstance(instance, str):
-            return True
-        return is_datetime("1970-01-01T" + instance)
+@_checks_drafts(name="date-time")
+def is_datetime(instance):
+    if not isinstance(instance, str):
+        return True
+    if not _data_time_re.match(instance):
+        return False
+    return True
+
+
+@_checks_drafts(draft7="time")
+def is_time(instance):
+    if not isinstance(instance, str):
+        return True
+    return is_datetime("1970-01-01T" + instance)
 
 
 @_checks_drafts(name="regex", raises=re.error)
