@@ -58,7 +58,7 @@ jobs:
         asv machine --yes
         asv run ALL --skip-existing-commits
         asv publish
-        asv run git log
+        asv run check
         git config --global user.email "jjfemail@sina.com"
         git config --global user.name "WilliamHeaven"
         asv gh-pages
