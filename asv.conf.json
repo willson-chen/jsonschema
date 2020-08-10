@@ -4,7 +4,7 @@
     "project_url": "https://github.com/WilliamHeaven/jsonschema/",
     "repo": ".",
     "dvcs": "git",
-    "branches": ["bechmark_asv"],
+    "branches": ["benchmark_asv"],
     "show_commit_url": "https://github.com/WilliamHeaven/jsonschema/commit/",
     "pythons": ["3.6"],
     "matrix": {
