@@ -56,7 +56,7 @@ jobs:
       run: |
         pwd 
         asv machine --yes
-        asv run --skip existing-commits ALL
+        asv run ALL --skip-existing-commits
         asv publish
         asv run git log
         git config --global user.email "jjfemail@sina.com"
