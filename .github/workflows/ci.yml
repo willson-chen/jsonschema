@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latestt]
+        os: [ubuntu-latest]
         python-version:
          - name: pypy3
            toxenv: pypy3-tests
