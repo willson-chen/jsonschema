@@ -12,16 +12,16 @@ from pyrsistent import m
 from jsonschema.tests._suite import Version
 import jsonschema
 
-
 issue232 = Version(
-    path=Path(__file__).parent / "issue232",
+    path=Path(__file__).parent / "issue232_test",
     remotes=m(),
-    name="issue232",
+    name="issue232_test",
 )
 
+class PeakmemSuite:
 
-if __name__ == "__main__":
-    issue232.benchmark(
-        runner=Runner(),
-        Validator=jsonschema.Draft4Validator,
-    )
+    def peakmem_issue(self):
+        issue232.benchmark(
+            runner=Runner(),
+            Validator=jsonschema.Draft4Validator,
+        )
