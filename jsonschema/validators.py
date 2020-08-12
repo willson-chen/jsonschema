@@ -646,6 +646,7 @@ class RefResolver(object):
         )
         self.store.update(store)
         self.store[base_uri] = referrer
+        self.store_urn_in_root_id(referrer)
 
         self._urljoin_cache = urljoin_cache
         self._remote_cache = remote_cache
@@ -853,6 +854,14 @@ class RefResolver(object):
         if self.cache_remote:
             self.store[uri] = result
         return result
+
+    def store_urn_in_root_id(self, schema):
+        """
+        If "urn:" in schema's root id, then store the schema in self.store[""].
+        """
+        if isinstance(schema, dict) and (u"urn:" in schema.get(u"id", u"") or
+                                         u"urn:" in schema.get(u"$id", u"")):
+            self.store[""] = schema
 
 
 def validate(instance, schema, cls=None, *args, **kwargs):
