@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "KEY1": {
+      "$ref": "#definitions/schemas"
+      }
+   },
+   "definitions": {
+    "schemas": {
+      "type": "string"
+      }
+    }
+}
+
